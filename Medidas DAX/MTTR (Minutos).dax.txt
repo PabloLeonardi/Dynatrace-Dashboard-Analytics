@@ -1,0 +1,8 @@
+MTTR (Minutos) = 
+AVERAGEX(
+    FILTER(
+        DISTINCT('Probl_Impacted'[displayId]),
+        CALCULATE(MAX('Probl_Impacted'[Duracao_Minutos])) >= 0
+    ),
+    CALCULATE(MAX('Probl_Impacted'[Duracao_Minutos]))
+)

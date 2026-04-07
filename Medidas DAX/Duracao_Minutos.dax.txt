@@ -1,0 +1,9 @@
+Duracao_Minutos = 
+VAR Inicio = 'Probl_Impacted'[StartDate]
+VAR Fim = 'Probl_Impacted'[EndDate]
+RETURN
+IF(
+    ISBLANK(Fim), 
+    DATEDIFF(Inicio, NOW(), MINUTE), -- Se ainda estiver aberto, conta até agora
+    DATEDIFF(Inicio, Fim, MINUTE)
+)

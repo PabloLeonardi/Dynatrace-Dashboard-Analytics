@@ -1,0 +1,1 @@
+TotalProblemas = COUNTROWS(Probl_Impacted)

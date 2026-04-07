@@ -1,0 +1,8 @@
+ProblemMaisRecorrente = 
+VAR ProblemaRepetido =
+    TOPN(1,
+        SUMMARIZE('Probl_Impacted', 'Probl_Impacted'[title], "Contagem", COUNTX('Probl_Impacted', 'Probl_Impacted'[title])),
+        [Contagem], DESC
+    )
+RETURN
+    MAXX(ProblemaRepetido, [title])

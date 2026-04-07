@@ -1,0 +1,11 @@
+Downtime_Formatado = 
+VAR TotalMin = [Downtime_Availability_Min]
+
+VAR Horas =
+QUOTIENT(TotalMin, 60)
+
+VAR Minutos =
+MOD(TotalMin, 60)
+
+RETURN
+Horas & "h " & Minutos & "m"

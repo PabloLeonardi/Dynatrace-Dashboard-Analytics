@@ -1,0 +1,9 @@
+Downtime_Availability_Min = 
+CALCULATE(
+    SUM('Probl_Impacted'[Duracao_Minutos]),
+    FILTER(
+        'Probl_Impacted',
+        'Probl_Impacted'[severityLevel] = "AVAILABILITY"
+        && 'Probl_Impacted'[Duracao_Minutos] > 0
+    )
+)

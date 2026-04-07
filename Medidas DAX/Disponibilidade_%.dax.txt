@@ -1,0 +1,10 @@
+Disponibilidade_% = 
+
+VAR TempoTotal = [Tempo_Total_Minutos]
+VAR Downtime = [Downtime_Availability_Min]
+
+RETURN
+DIVIDE(
+    TempoTotal - Downtime,
+    TempoTotal
+)

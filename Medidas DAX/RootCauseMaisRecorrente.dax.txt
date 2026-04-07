@@ -1,0 +1,8 @@
+RootCauseMaisRecorrente = 
+VAR RootRepetido =
+    TOPN(1,
+        SUMMARIZE('Probl_Impacted', 'Probl_Impacted'[rootCause.entities], "Contagem", COUNTX('Probl_Impacted', 'Probl_Impacted'[rootCause.entities])),
+        [Contagem], DESC
+    )
+RETURN
+    MAXX(RootRepetido, [rootCause.entities])

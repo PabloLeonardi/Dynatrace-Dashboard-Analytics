@@ -1,0 +1,37 @@
+MTTR_Variacao_% = 
+
+VAR MesesSelecionados =
+    VALUES('Calendario'[Ano-Mes])
+
+VAR QtdMeses =
+    COUNTROWS(MesesSelecionados)
+
+RETURN
+IF(
+    QtdMeses <> 2,
+    0,
+
+    VAR MesMin =
+        MIN('Calendario'[Ano-Mes])
+
+    VAR MesMax =
+        MAX('Calendario'[Ano-Mes])
+
+    VAR MTTR_Inicial =
+        CALCULATE(
+            [MTTR (Minutos)],
+            'Calendario'[Ano-Mes] = MesMin
+        )
+
+    VAR MTTR_Final =
+        CALCULATE(
+            [MTTR (Minutos)],
+            'Calendario'[Ano-Mes] = MesMax
+        )
+
+    RETURN
+        DIVIDE(
+            MTTR_Final - MTTR_Inicial,
+            MTTR_Inicial
+        )
+)

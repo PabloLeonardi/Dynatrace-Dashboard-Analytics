@@ -1,0 +1,5 @@
+Disponibilidade_Geral_% = 
+AVERAGEX(
+    VALUES('Probl_Impacted'[impacted.entities]),
+    [Disponibilidade_%]
+)
