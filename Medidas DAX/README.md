@@ -1,4 +1,4 @@
-# 📊 Dashboard de Observabilidade & Performance (SLA/MTTR)
+# 📊 Documento das medidas DAX
 
 ![Power BI](https://img.shields.io/badge/Power_BI-F2C811?style=for-the-badge&logo=powerbi&logoColor=black)
 ![Dynatrace](https://img.shields.io/badge/Dynatrace-732777?style=for-the-badge&logo=dynatrace&logoColor=white)
