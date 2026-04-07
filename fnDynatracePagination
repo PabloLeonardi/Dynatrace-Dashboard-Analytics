@@ -1,0 +1,56 @@
+(baseUrl as text, token as text, endpoint as text, query as record, listField as text) =>
+let
+BaseUrlClean =
+    Text.TrimEnd(baseUrl,"/"),
+EndpointClean =
+    Text.TrimStart(endpoint,"/"),
+GetPage = (pageKey as nullable text) =>
+let
+    QueryParams =
+        if pageKey <> null
+        then [nextPageKey = pageKey]
+        else query,
+    Response =
+        Json.Document(
+            Web.Contents(
+                BaseUrlClean,
+                [
+                    RelativePath = EndpointClean,
+                    Query = QueryParams,
+                    Headers = [
+                        Authorization = "Api-Token " & token
+                    ],
+                    Timeout = #duration(0,0,5,0)
+                ]
+            )
+        )
+in
+    Response,
+FirstPage =
+    GetPage(null),
+Pages =
+    List.Generate(
+        ()=> FirstPage,
+        each _ <> null,
+        each
+            if Record.HasFields(_, "nextPageKey")
+            then GetPage(_[nextPageKey])
+            else null
+    ),
+Items =
+    List.Transform(
+        Pages,
+        each Record.Field(_, listField)
+    ),
+Combined =
+    List.Combine(Items),
+Result =
+    Table.FromList(
+        Combined,
+        Splitter.SplitByNothing(),
+        null,
+        null,
+        ExtraValues.Error
+    )
+in
+    Result
