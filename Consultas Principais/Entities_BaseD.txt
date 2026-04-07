@@ -1,0 +1,47 @@
+let
+
+Fonte =
+Table.Combine({
+    Application_Base,
+    Services,
+    Hosts
+}),
+
+ReorderColumns =
+Table.ReorderColumns(
+    Fonte,
+    {
+        "entityId",
+        "type",
+        "displayName",
+        "primaryIconType",
+        "firstSeen",
+        "lastSeen",
+        "URLHost",
+        "URLService",
+        "URLApplication",
+        "tag",
+        "managementZone",
+        "hostGroupName",
+        "state",
+        "serviceType",
+        "port",
+        "ipAddress",
+        "osType",
+        "osVersion",
+        "osArchitecture",
+        "logicalCpuCores",
+        "memoryTotal",
+        "installerVersion"
+    },
+    MissingField.Ignore
+),
+
+RemoveEmptyColumns =
+Table.RemoveColumns(
+    ReorderColumns,
+    {},
+    MissingField.Ignore
+)
+in
+    RemoveEmptyColumns

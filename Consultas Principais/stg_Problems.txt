@@ -1,0 +1,40 @@
+let
+    // 1. Configurações
+    ApiToken = Dynatrace_Token,
+    UrlBase = Dynatrace_URL & "api/v2/problems",
+    DataInicio = "2025-01-01T03:00:00Z",
+
+ // 2. Função "Bruta" para buscar páginas
+    GetPage = (url, optional key) =>
+        let
+            // URL pura, sem o parâmetro fields que estava causando o erro 400
+            UrlCompleta = if key = null 
+                          then url & "?pageSize=500&from=" & DataInicio 
+                          else url & "?nextPageKey=" & key,
+            
+            content = Json.Document(Web.Contents(UrlCompleta, [
+                Headers = [Authorization = "Api-Token " & ApiToken]
+            ])),
+            
+            nextKey = Record.FieldOrDefault(content, "nextPageKey", null),
+            currentData = content[problems],
+            result = if nextKey = null then {currentData} else {currentData} & @GetPage(url, nextKey)
+        in
+            result,
+
+    // 3. Execução
+    ChamadaApi = GetPage(UrlBase),
+    ListaConsolidada = List.Combine(ChamadaApi),
+    TabelaBase = Table.FromList(ListaConsolidada, Splitter.SplitByNothing(), null, null, ExtraValues.Error),
+
+    // 4. Expansão corrigida (incluindo rootCauseEntity)
+    #"Campos Expandidos" = Table.ExpandRecordColumn(TabelaBase, "Column1", 
+        {"problemId", "displayId", "title", "status", "severityLevel", "impactLevel", "startTime", "endTime", "affectedEntities", "impactedEntities", "rootCauseEntity", "managementZones", "entityTags", "problemFilters"}, 
+        {"problemId", "displayId", "title", "status", "severityLevel", "impactLevel", "startTime", "endTime", "affectedEntities", "impactedEntities", "rootCauseEntity", "managementZones", "entityTags", "problemFilters"}),
+
+    #"Tipo Alterado" = Table.TransformColumnTypes(#"Campos Expandidos",{
+        {"startTime", Int64.Type}, 
+        {"endTime", Int64.Type}
+    })
+in
+    #"Tipo Alterado"

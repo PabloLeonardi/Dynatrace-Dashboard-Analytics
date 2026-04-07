@@ -1,0 +1,190 @@
+let
+
+HostsRaw =
+fnDynatracePagination(
+    Dynatrace_URL,
+    Dynatrace_Token,
+    "api/v2/entities",
+    [
+        pageSize = Text.From(Page_Size),
+        entitySelector = "type(HOST)",
+        fields = "+firstSeenTms,+lastSeenTms,+properties,+tags,+icon,+fromRelationships,+toRelationships"
+    ],
+    "entities"
+),
+
+ExpandBase =
+Table.ExpandRecordColumn(
+    HostsRaw,
+    "Column1",
+    {
+        "entityId",
+        "type",
+        "displayName",
+        "firstSeenTms",
+        "lastSeenTms",
+        "properties",
+        "tags",
+        "icon",
+        "fromRelationships",
+        "toRelationships"
+    }
+),
+
+ExpandProperties =
+Table.ExpandRecordColumn(
+    ExpandBase,
+    "properties",
+    {
+        "ipAddress",
+        "state",
+        "hostGroupName",
+        "macAddresses",
+        "osType",
+        "osVersion",
+        "osArchitecture",
+        "logicalCpuCores",
+        "memoryTotal",
+        "installerVersion"
+    }
+),
+
+ExpandIP =
+Table.ExpandListColumn(
+    ExpandProperties,
+    "ipAddress"
+),
+
+ExpandMac =
+Table.ExpandListColumn(
+    ExpandIP,
+    "macAddresses"
+),
+
+ExpandTags =
+Table.ExpandListColumn(
+    ExpandMac,
+    "tags"
+),
+
+ExpandTagsValue =
+Table.ExpandRecordColumn(
+    ExpandTags,
+    "tags",
+    {"stringRepresentation"},
+    {"tag"}
+),
+
+ExpandIcon =
+Table.ExpandRecordColumn(
+    ExpandTagsValue,
+    "icon",
+    {"primaryIconType"},
+    {"primaryIconType"}
+),
+
+ExpandRunsOn =
+Table.ExpandRecordColumn(
+    ExpandIcon,
+    "fromRelationships",
+    {"runsOn"},
+    {"runsOn"}
+),
+
+ExpandRunsOnList =
+Table.ExpandListColumn(
+    ExpandRunsOn,
+    "runsOn"
+),
+
+ExpandRunsOnId =
+Table.ExpandRecordColumn(
+    ExpandRunsOnList,
+    "runsOn",
+    {"id","type"},
+    {"runsOnId","runsOnType"}
+),
+
+ExpandSiteOf =
+Table.ExpandRecordColumn(
+    ExpandRunsOnId,
+    "toRelationships",
+    {"isSiteOf"},
+    {"isSiteOf"}
+),
+
+ExpandSiteOfList =
+Table.ExpandListColumn(
+    ExpandSiteOf,
+    "isSiteOf"
+),
+
+ExpandSiteOfId =
+Table.ExpandRecordColumn(
+    ExpandSiteOfList,
+    "isSiteOf",
+    {"id","type"},
+    {"siteId","siteType"}
+),
+
+ConvertFirstSeen =
+Table.AddColumn(
+    ExpandSiteOfId,
+    "firstSeen",
+    each #datetime(1970,1,1,0,0,0) + #duration(0,0,0,[firstSeenTms]/1000),
+    type datetime
+),
+
+ConvertLastSeen =
+Table.AddColumn(
+    ConvertFirstSeen,
+    "lastSeen",
+    each #datetime(1970,1,1,0,0,0) + #duration(0,0,0,[lastSeenTms]/1000),
+    type datetime
+),
+
+MemoryGB =
+Table.TransformColumns(
+    ConvertLastSeen,
+    {{"memoryTotal", each Number.Round(_ / 1000000000,4), type number}}
+),
+
+AddURL =
+Table.AddColumn(
+    MemoryGB,
+    "URLHost",
+    each Dynatrace_URL & "/ui/apps/dynatrace.classic.hosts/ui/entity/" & [entityId]
+),
+
+FinalColumns =
+Table.SelectColumns(
+    AddURL,
+    {
+        "entityId",
+        "type",
+        "displayName",
+        "ipAddress",
+        "hostGroupName",
+        "state",
+        "tag",
+        "macAddresses",
+        "osType",
+        "primaryIconType",
+        "osVersion",
+        "osArchitecture",
+        "logicalCpuCores",
+        "memoryTotal",
+        "installerVersion",
+        "runsOnId",
+        "runsOnType",
+        "siteId",
+        "siteType",
+        "firstSeen",
+        "lastSeen",
+        "URLHost"
+    }
+),
+    #"Duplicatas Removidas" = Table.Distinct(FinalColumns, {"entityId"})
+
+in
+#"Duplicatas Removidas"

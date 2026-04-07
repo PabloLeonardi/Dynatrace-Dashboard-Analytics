@@ -1,0 +1,189 @@
+let
+
+ServicesRaw =
+fnDynatracePagination(
+    Dynatrace_URL,
+    Dynatrace_Token,
+    "api/v2/entities",
+    [
+        pageSize = Text.From(Page_Size),
+        entitySelector = "type(SERVICE)",
+        fields = "+firstSeenTms,+lastSeenTms,+properties,+tags,+managementZones,+fromRelationships,+icon"
+    ],
+    "entities"
+),
+
+ExpandBase =
+Table.ExpandRecordColumn(
+    ServicesRaw,
+    "Column1",
+    {
+        "entityId",
+        "type",
+        "displayName",
+        "firstSeenTms",
+        "lastSeenTms",
+        "properties",
+        "tags",
+        "managementZones",
+        "icon",
+        "fromRelationships"
+    }
+),
+
+ExpandIcon =
+Table.ExpandRecordColumn(
+    ExpandBase,
+    "icon",
+    {"primaryIconType"},
+    {"primaryIconType"}
+),
+
+ExpandManagementZones =
+Table.ExpandListColumn(
+    ExpandIcon,
+    "managementZones"
+),
+
+ExpandManagementZonesName =
+Table.ExpandRecordColumn(
+    ExpandManagementZones,
+    "managementZones",
+    {"name"},
+    {"managementZone"}
+),
+
+ExpandTags =
+Table.ExpandListColumn(
+    ExpandManagementZonesName,
+    "tags"
+),
+
+ExpandTagsValue =
+Table.ExpandRecordColumn(
+    ExpandTags,
+    "tags",
+    {"stringRepresentation"},
+    {"tag"}
+),
+
+ExpandProperties =
+Table.ExpandRecordColumn(
+    ExpandTagsValue,
+    "properties",
+    {
+        "port",
+        "ipAddress",
+        "serviceType",
+        "isExternalService",
+        "softwareTechnologies"
+    }
+),
+
+ExpandIp =
+Table.ExpandListColumn(
+    ExpandProperties,
+    "ipAddress"
+),
+
+ExpandTechList =
+Table.ExpandListColumn(
+    ExpandIp,
+    "softwareTechnologies"
+),
+
+ExpandTech =
+Table.ExpandRecordColumn(
+    ExpandTechList,
+    "softwareTechnologies",
+    {"type","version"},
+    {"softwareTechnology","softwareVersion"}
+),
+
+ExpandRelationships =
+Table.ExpandRecordColumn(
+    ExpandTech,
+    "fromRelationships",
+    {
+        "runsOnHost",
+        "calls"
+    }
+),
+
+ExpandRunsOnHost =
+Table.ExpandListColumn(
+    ExpandRelationships,
+    "runsOnHost"
+),
+
+ExpandRunsOnHostId =
+Table.ExpandRecordColumn(
+    ExpandRunsOnHost,
+    "runsOnHost",
+    {"id"},
+    {"runsOnHostId"}
+),
+
+ExpandCalls =
+Table.ExpandListColumn(
+    ExpandRunsOnHostId,
+    "calls"
+),
+
+ExpandCallsId =
+Table.ExpandRecordColumn(
+    ExpandCalls,
+    "calls",
+    {"id"},
+    {"callsServiceId"}
+),
+
+ConvertFirstSeen =
+Table.AddColumn(
+    ExpandCallsId,
+    "firstSeen",
+    each #datetime(1970,1,1,0,0,0) + #duration(0,0,0,[firstSeenTms]/1000),
+    type datetime
+),
+
+ConvertLastSeen =
+Table.AddColumn(
+    ConvertFirstSeen,
+    "lastSeen",
+    each #datetime(1970,1,1,0,0,0) + #duration(0,0,0,[lastSeenTms]/1000),
+    type datetime
+),
+
+AddServiceURL =
+Table.AddColumn(
+    ConvertLastSeen,
+    "ServiceURL",
+    each Dynatrace_URL & "/ui/apps/dynatrace.classic.services/#services/serviceOverview;gf=all;id=" & [entityId]
+),
+
+FinalColumns =
+Table.SelectColumns(
+    AddServiceURL,
+    {
+        "entityId",
+        "type",
+        "displayName",
+        "port",
+        "ipAddress",
+        "serviceType",
+        "isExternalService",
+        "softwareTechnology",
+        "softwareVersion",
+        "primaryIconType",
+        "managementZone",
+        "tag",
+        "runsOnHostId",
+        "callsServiceId",
+        "firstSeen",
+        "lastSeen",
+        "ServiceURL"
+    }
+),
+    #"Duplicatas Removidas" = Table.Distinct(FinalColumns, {"runsOnHostId"})
+in
+    #"Duplicatas Removidas"

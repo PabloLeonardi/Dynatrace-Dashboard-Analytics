@@ -1,0 +1,136 @@
+let
+
+ApplicationsRaw =
+fnDynatracePagination(
+    Dynatrace_URL,
+    Dynatrace_Token,
+    "api/v2/entities",
+    [
+        pageSize = Text.From(Page_Size),
+        entitySelector = "type(APPLICATION)",
+        fields = "+firstSeenTms,+lastSeenTms,+properties,+managementZones,+fromRelationships,+icon"
+    ],
+    "entities"
+),
+
+ExpandBase =
+Table.ExpandRecordColumn(
+    ApplicationsRaw,
+    "Column1",
+    {
+        "entityId",
+        "type",
+        "displayName",
+        "firstSeenTms",
+        "lastSeenTms",
+        "properties",
+        "managementZones",
+        "icon",
+        "fromRelationships"
+    }
+),
+
+ExpandIcon =
+Table.ExpandRecordColumn(
+    ExpandBase,
+    "icon",
+    {"primaryIconType"},
+    {"iconType"}
+),
+
+ExpandManagementZone =
+Table.ExpandListColumn(
+    ExpandIcon,
+    "managementZones"
+),
+
+ExpandManagementZoneName =
+Table.ExpandRecordColumn(
+    ExpandManagementZone,
+    "managementZones",
+    {"name"},
+    {"managementZone"}
+),
+
+ExpandProperties =
+Table.ExpandRecordColumn(
+    ExpandManagementZoneName,
+    "properties",
+    {
+        "detectedName",
+        "applicationType",
+        "customizedName"
+    },
+    {
+        "detectedName",
+        "applicationType",
+        "customizedName"
+    }
+),
+
+ExpandRelationships =
+Table.ExpandRecordColumn(
+    ExpandProperties,
+    "fromRelationships",
+    {"calls"},
+    {"calls"}
+),
+
+ExpandCallsList =
+Table.ExpandListColumn(
+    ExpandRelationships,
+    "calls"
+),
+
+ExpandCallsId =
+Table.ExpandRecordColumn(
+    ExpandCallsList,
+    "calls",
+    {"id"},
+    {"serviceId"}
+),
+
+ConvertFirstSeen =
+Table.AddColumn(
+    ExpandCallsId,
+    "firstSeen",
+    each #datetime(1970,1,1,0,0,0) + #duration(0,0,0,[firstSeenTms]/1000),
+    type datetime
+),
+
+ConvertLastSeen =
+Table.AddColumn(
+    ConvertFirstSeen,
+    "lastSeen",
+    each #datetime(1970,1,1,0,0,0) + #duration(0,0,0,[lastSeenTms]/1000),
+    type datetime
+),
+
+AddURL =
+Table.AddColumn(
+    ConvertLastSeen,
+    "ApplicationURL",
+    each Dynatrace_URL & "/ui/apps/dynatrace.classic.frontend/#nav;meid=" & [entityId]
+),
+
+FinalColumns =
+Table.SelectColumns(
+    AddURL,
+    {
+        "entityId",
+        "type",
+        "displayName",
+        "applicationType",
+        "detectedName",
+        "customizedName",
+        "iconType",
+        "managementZone",
+        "serviceId",
+        "firstSeen",
+        "lastSeen",
+        "ApplicationURL"
+    }
+),
+    #"Duplicatas Removidas" = Table.Distinct(FinalColumns, {"serviceId"})
+in
+    #"Duplicatas Removidas"
