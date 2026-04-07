@@ -67,5 +67,5 @@ A estrutura foi montada seguindo as melhores práticas de **Star Schema**, garan
 
 ## 👤 Autor
 **Pablo B. Leonardi**
-* Analista de Operações e Negócios
+* Analista de Operações e Planejamento
 * [LinkedIn](https://www.linkedin.com/in/pablo-leonardi-198b56248/) | [GitHub](https://github.com/PabloLeonardi)
