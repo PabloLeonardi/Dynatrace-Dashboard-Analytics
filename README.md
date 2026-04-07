@@ -67,5 +67,5 @@ A estrutura foi montada seguindo as melhores práticas de **Star Schema**, garan
 
 ## 👤 Autor
 **Pablo B. Leonardi**
-* IT Support Technician | Monitoring & Observability Analyst
+* Analista de Operações e Negócios
 * [LinkedIn](SEU_LINK_AQUI) | [GitHub](https://github.com/SEU_USUARIO)
