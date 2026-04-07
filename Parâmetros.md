@@ -1,29 +1,40 @@
-🛠️ Como Criar os Parâmetros necessários no Power BI
+# 🛠️ Configuração de Parâmetros no Power BI
 
-Vá na guia Modelagem (Modeling).
+Para que o dashboard de monitoramento funcione corretamente e se conecte à API do **Dynatrace**, é necessário configurar quatro parâmetros globais. Esses parâmetros garantem que as consultas sejam dinâmicas e seguras.
 
-Clique em Gerenciar Parâmetros > Novo Parâmetro.
+## 📍 Passo a Passo para Criação
 
-No painel que abrir, cri esses 4 parâmetros
+1. No Power BI Desktop, vá até a guia **Modelagem** (Modeling).
+2. Clique no botão **Gerenciar Parâmetros** e selecione **Novo Parâmetro**.
+3. Crie os quatro parâmetros abaixo conforme as especificações:
 
-1. 
-  Nome = Dynatrace_URL
-  Tipo = Texto
-  Valor Atual = SUA_URL_DYNATRACE com / no final... (Ex: https://SEU_DYNATRACE.dynatrace.com/)
+---
 
-2. 
-  Nome = Dynatrace_Token
-  Tipo = Texto
-  Valor Atual = SEU_TOKEN_DYNATRACE (Ex: dt0c01.....)
-(obs: seu token deve ter todas as permissões de READ para garantir o funcionamento das consultas)
+### 1. Dynatrace_URL
+Este parâmetro define o endpoint base da sua instância.
+* **Tipo:** `Texto`
+* **Valor Sugerido:** `https://SUA_URL.live.dynatrace.com/`
+* **⚠️ Atenção:** Certifique-se de incluir a barra `/` ao final da URL.
 
-3.
-  Nome = Page_Size
-  Tipo = Qualquer
-  Valor Atual = 500
+### 2. Dynatrace_Token
+Token de autenticação para acesso aos dados.
+* **Tipo:** `Texto`
+* **Valor Sugerido:** `dt0c01.xxxxxxxxxxxxxx`
+* **💡 Nota:** O token deve possuir permissões de **Read (Leitura)** para todas as entidades e problemas (`v2 API scopes`) para garantir o funcionamento total das consultas.
 
-4.
-  Nome = Data_Inicio
-  Tipo = Texto
-  Valor Atual = DATA INICIAL QUE SERÁ FEITA A COLETA (ex: 01/01/2025 00:00:00)
-  
+### 3. Page_Size
+Define a volumetria de registros por página na requisição da API.
+* **Tipo:** `Qualquer` (ou Número Inteiro)
+* **Valor Sugerido:** `500`
+* **Por que usar?** Controla a paginação para evitar timeouts em ambientes com alta volumetria de alertas.
+
+### 4. Data_Inicio
+Define o marco zero da coleta de dados histórica.
+* **Tipo:** `Texto`
+* **Valor Sugerido:** `01/01/2025 00:00:00`
+* **Formato:** Use o padrão `DD/MM/AAAA HH:MM:SS`.
+
+---
+
+> [!IMPORTANT]
+> **Dica de Segurança:** Nunca suba o seu arquivo `.pbix` para o GitHub com o seu **Token Real** preenchido no "Valor Atual". Limpe os parâmetros ou use valores fictícios antes de realizar o commit para proteger o acesso ao seu ambiente Dynatrace.
