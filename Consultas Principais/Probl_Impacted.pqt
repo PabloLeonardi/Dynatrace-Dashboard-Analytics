@@ -1,8 +1,8 @@
 let
-    // 1. Fonte vinda da stg_Problems (seu Hub Central)
+    // 1. Fonte vinda da stg_Problems
     Fonte = stg_Problems,
 
-    // 2. Expandir entidades impactadas (Lista -> Registro -> ID)
+    // 2. Expandir entidades impactadas
     #"Expandir Impacto Lista" = Table.ExpandListColumn(Fonte, "impactedEntities"),
     #"Expandir Impacto Rec" = Table.ExpandRecordColumn(#"Expandir Impacto Lista", "impactedEntities", {"entityId", "name"}, {"impacted.entityId", "impacted.name"}),
     #"Expandir Impacto ID" = Table.ExpandRecordColumn(#"Expandir Impacto Rec", "impacted.entityId", {"id"}, {"entityId"}),
@@ -11,11 +11,11 @@ let
     #"Expandir Raiz Rec" = Table.ExpandRecordColumn(#"Expandir Impacto ID", "rootCauseEntity", {"entityId", "name"}, {"rootCause.entityId", "rootCause.name"}),
     #"Expandir Raiz ID" = Table.ExpandRecordColumn(#"Expandir Raiz Rec", "rootCause.entityId", {"id"}, {"rootCause.entityId.id"}),
 
-    // 4. Expandir Management Zones (Formato correto para Registros dentro de Listas)
+    // 4. Expandir Management Zones
     #"Expandir MZ Lista" = Table.ExpandListColumn(#"Expandir Raiz ID", "managementZones"),
     #"Expandir MZ Rec" = Table.ExpandRecordColumn(#"Expandir MZ Lista", "managementZones", {"name"}, {"managementZones.name"}),
 
-    // 5. Expandir Tags (Formato correto para Registros dentro de Listas)
+    // 5. Expandir Tags
     #"Expandir Tags Lista" = Table.ExpandListColumn(#"Expandir MZ Rec", "entityTags"),
     #"Expandir Tags Rec" = Table.ExpandRecordColumn(#"Expandir Tags Lista", "entityTags", {"value"}, {"entityTags.value"}),
 
@@ -24,14 +24,14 @@ let
     #"Data Fim" = Table.AddColumn(#"Data Início", "EndDate", each #datetime(1970, 1, 1, 0, 0, 0) + #duration(0, -3, 0, [endTime] / 1000), type datetime),
     #"URL Adicionada" = Table.AddColumn(#"Data Fim", "URLProblems", each "https://nbq29552.live.dynatrace.com/#problems/problemdetails;gf=all;pid=" & [problemId], type text),
     
-    // 7. Renomear para bater com os nomes de colunas que seu modelo exige
+    // 7. Renomear para bater com os nomes de colunas
     #"Renomear" = Table.RenameColumns(#"URL Adicionada", {
         {"impacted.name", "impacted.entities"},
         {"rootCause.entityId.id", "rootCause.entityId"},
         {"rootCause.name", "rootCause.entities"}
     }),
 
-    // 8. Seleção Final (Aqui garantimos que a severityLevel está incluída)
+    // 8. Seleção Final
     #"Colunas Finais" = Table.SelectColumns(#"Renomear", {
         "displayId", 
         "title", 
