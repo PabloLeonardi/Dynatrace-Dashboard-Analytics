@@ -1,0 +1,17 @@
+Calendario = 
+ADDCOLUMNS (
+    CALENDAR (DATE(2025, 1, 1), DATE(2026, 12, 31)), -- Define o intervalo de datas
+    "Ano", YEAR([Date]),                               -- Ano
+    "Mes", MONTH([Date]),                              -- Número do Mês (1 a 12)
+    "Nome do Mês", FORMAT([Date], "MMMM"),             -- Nome do Mês (Janeiro, Fevereiro, ...)
+    "Ano-Mes", FORMAT([Date], "YYYY-MM"),              -- Formato Ano-Mês (2025-01)
+    "Dia", DAY([Date]),                                -- Número do Dia (1 a 31)
+    "Dia da Semana", WEEKDAY([Date], 2),               -- Número do Dia da Semana (1=Segunda, 7=Domingo)
+    "Nome do Dia", FORMAT([Date], "dddd"),             -- Nome do Dia (Segunda, Terça, ...)
+    "Trimestre", "Q" & QUARTER([Date]),                -- Trimestre (Q1, Q2, Q3, Q4)
+    "Ano-Trimestre", FORMAT([Date], "YYYY") & "-Q" & QUARTER([Date]), -- Ano-Trimestre
+    "Semana do Ano", WEEKNUM([Date], 2),               -- Semana do Ano (1 a 53)
+    "É Final de Semana", IF(WEEKDAY([Date], 2) >= 6, "Sim", "Não"), -- Indica se é sábado/domingo
+    "Dia Útil", IF(WEEKDAY([Date], 2) < 6, "Sim", "Não"), -- Indica se é dia útil
+    "Data Completa", FORMAT([Date], "dd/MM/yyyy")      -- Data no formato brasileiro
+)
