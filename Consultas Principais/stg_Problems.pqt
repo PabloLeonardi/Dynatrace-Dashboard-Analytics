@@ -2,7 +2,7 @@ let
     // 1. Configurações
     ApiToken = Dynatrace_Token,
     UrlBase = Dynatrace_URL & "api/v2/problems",
-    DataInicio = "2025-01-01T03:00:00Z",
+    DataInicio = Data_Inicio,
 
  // 2. Função "Bruta" para buscar páginas
     GetPage = (url, optional key) =>
