@@ -27,7 +27,7 @@ Focado na análise técnica e imediata dos incidentes dentro de um período dete
     * **Top 5 RootCause:** Mostra as 5 RootCause mais recorrentes dentro do periodo selecionado
 
 
-### 2. Dashboard Overview (Executive View)
+### 2. Dashboard Overview (Visão Executiva)
 ![Dashboard Operacional](/images/Dashboard_overview_semVariação.png)
 ![Dashboard Operacional](/images/Dashboard_overview_ComparandoMeses.png)
 Focado na análise histórica e tendência mensal. Serve para validar se as ações tomadas no nível operacional estão gerando resultados reais no longo prazo.
