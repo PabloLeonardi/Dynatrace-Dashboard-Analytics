@@ -17,8 +17,6 @@ O objetivo principal é a **identificação proativa de ofensores**, permitindo 
 O projeto é dividido em duas camadas estratégicas:
 
 ### 1. Dashboard Operacional
-![Dashboard Operacional](/images/Dashboard_operacional.png)
-
 Focado na análise técnica e imediata dos incidentes dentro de um período determinado. É a ferramenta principal para a **Gestão de Problemas**.
 
 * **Principais KPIs:**
@@ -26,16 +24,19 @@ Focado na análise técnica e imediata dos incidentes dentro de um período dete
     * **Problema mais Recorrente:** Mapeia o sintoma (ex: CPU Saturation, Failure rate increase) com maior frequência.
     * **Top 5 RootCause:** Mostra as 5 RootCause mais recorrentes dentro do periodo selecionado
 
+![Dashboard Operacional](/images/Dashboard_operacional.png)
+
 
 ### 2. Dashboard Overview (Visão Executiva)
-![Dashboard Operacional](/images/Dashboard_overview_semVariação.png)
-![Dashboard Operacional](/images/Dashboard_overview_ComparandoMeses.png)
 Focado na análise histórica e tendência mensal. Serve para validar se as ações tomadas no nível operacional estão gerando resultados reais no longo prazo.
 
 * **Métricas de Desempenho:**
     * **Disponibilidade Geral por Serviço:** Monitoramento de SLAs críticos para o negócio.
     * **Downtime Acumulado:** Soma total do tempo de indisponibilidade (Severity: Availability).
     * **Análise Comparativa:** Variação percentual de Alertas e MTTR entre meses distintos para medir a eficiência da evolução do ambiente.
+
+![Dashboard Operacional](/images/Dashboard_overview_semVariação.png)
+![Dashboard Operacional](/images/Dashboard_overview_ComparandoMeses.png)
 
 ---
 
