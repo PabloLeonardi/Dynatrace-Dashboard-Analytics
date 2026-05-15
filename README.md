@@ -24,7 +24,7 @@ Focado na análise técnica e imediata dos incidentes dentro de um período dete
     * **Problema mais Recorrente:** Mapeia o sintoma (ex: CPU Saturation, Failure rate increase) com maior frequência.
     * **Top 5 RootCause:** Mostra as 5 RootCause mais recorrentes dentro do periodo selecionado
 
-![Dashboard Operacional](/images/Dashboard Operacional.png)
+![Dynatrace-Dashboard-Analytics](/images/Dashboard Operacional.png)
 
 
 ### 2. Dashboard Overview (Visão Executiva)
