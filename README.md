@@ -22,9 +22,9 @@ Focado na análise técnica e imediata dos incidentes dentro de um período dete
 * **Principais KPIs:**
     * **Root Cause Recorrente:** Identifica a entidade (Host, Service, Process) que mais origina falhas, direcionando o foco da engenharia.
     * **Problema mais Recorrente:** Mapeia o sintoma (ex: CPU Saturation, Failure rate increase) com maior frequência.
-    * **Top 5 RootCause:** Mostra as 5 RootCause mais recorrentes dentro do periodo selecionado
+    * **Top 5 RootCause:** Mostra as 5 RootCause mais recorrentes dentro do periodo selecionado.
 
-![Dynatrace-Dashboard-Analytics](/images/Dashboard Operacional.png)
+![Dashboard Operacional](images/Dashboard%20Operacional.png)
 
 
 ### 2. Dashboard Overview (Visão Executiva)
@@ -35,7 +35,7 @@ Focado na análise histórica e tendência mensal. Serve para validar se as aç�
     * **Downtime Acumulado:** Soma total do tempo de indisponibilidade (Severity: Availability).
     * **Análise Comparativa:** Variação percentual de Alertas e MTTR entre meses distintos para medir a eficiência da evolução do ambiente.
 
-![Dashboard Operacional](/images/Dashboard Overview.png)
+![Dashboard Overview](images/Dashboard%20Overview.png)
 
 ---
 
